@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
+import 'package:input_formatter/Utils/number_formatter.dart';
 
 class AmountScreen extends StatefulWidget {
   const AmountScreen({Key? key}) : super(key: key);
@@ -10,8 +10,8 @@ class AmountScreen extends StatefulWidget {
 }
 
 class _AmountScreenState extends State<AmountScreen> {
+  
   TextEditingController _controller = TextEditingController();
-  var formatNumber = NumberFormat('#,##,###',);
   FocusNode numberFocusNode = FocusNode();
 
   @override
@@ -45,7 +45,7 @@ class _AmountScreenState extends State<AmountScreen> {
                   focusNode: numberFocusNode,
                   textAlign: TextAlign.center,
                   onChanged: (text) {
-                    amountFormatter(text);    
+                    IndianRupeeFormatter.amountFormatter(text, _controller);
                   },
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                   inputFormatters: [
@@ -72,56 +72,6 @@ class _AmountScreenState extends State<AmountScreen> {
             ),
       ),
     );
-  }
-
-  // amount changing to indian format
-  void amountFormatter(String text) {
-
-    String rupeeSplittedText = text.split('₹').last.trim().toString();
-    String replacedText = rupeeSplittedText.replaceAll(',', '').trim();
-
-    int textLength = replacedText.length;
-
-    if (replacedText.contains('.')) {
-      doubleValueFormating(formatNumber, text);
-    } else {
-      if (textLength > 8) {
-        _controller.text =
-            "₹${formatNumber.format(int.parse(replacedText.toString().substring(0, 8)))}";
-        
-        _controller.selection = TextSelection.fromPosition(
-            TextPosition(offset: _controller.text.length));
-      } else if (textLength == 0) {
-        _controller.clear();
-        _controller.text = '₹';
-        _controller.selection =
-            TextSelection.fromPosition(const TextPosition(offset: 1));
-      } else {
-        _controller.text =
-            "₹${formatNumber.format(int.parse(replacedText.toString()))}";
-        _controller.selection = TextSelection.fromPosition(
-            TextPosition(offset: _controller.text.length));
-      }
-    }
-  }
-
-  // formting amount containing dot
-  void doubleValueFormating(NumberFormat formatter, String text) {
-    String formatString;
-    List<String> textSplitted;
-    if (text == '.') {
-      _controller.text = "₹ 0";
-      _controller.selection = TextSelection.fromPosition(
-          TextPosition(offset: _controller.text.length));
-    } else {
-      formatString = text.split('₹').last.trim().toString();
-
-      textSplitted = formatString.split('.');
-      _controller.text =
-          "₹${formatter.format(int.parse(textSplitted.first.toString())).toString()}.${textSplitted.last.toString().length > 2 ? textSplitted.last.toString().substring(0, 2).toString() : textSplitted.last.toString()}";
-      _controller.selection = TextSelection.fromPosition(
-          TextPosition(offset: _controller.text.length));
-    }
   }
 
 }
