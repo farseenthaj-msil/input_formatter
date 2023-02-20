@@ -26,56 +26,6 @@ class _AmountScreenState extends State<AmountScreen> {
     super.dispose();
   }
 
-  // amount changing to indian format
-  void amountFormatter(String text) {
-
-    String rupeeSplittedText = text.split('₹').last.trim().toString();
-    String replacedText = rupeeSplittedText.replaceAll(',', '').trim();
-
-    int textLength = replacedText.length;
-
-    if (replacedText.contains('.')) {
-      doubleValueFormating(formatNumber, text);
-    } else {
-      if (textLength > 8) {
-        _controller.text =
-            "₹${formatNumber.format(int.parse(replacedText.toString().substring(0, 8)))}";
-        
-        _controller.selection = TextSelection.fromPosition(
-            TextPosition(offset: _controller.text.length.toInt()));
-      } else if (textLength == 0) {
-        _controller.clear();
-        _controller.text = '₹';
-        _controller.selection =
-            TextSelection.fromPosition(const TextPosition(offset: 1));
-      } else {
-        _controller.text =
-            "₹${formatNumber.format(int.parse(replacedText.toString()))}";
-        _controller.selection = TextSelection.fromPosition(
-            TextPosition(offset: _controller.text.length.toInt()));
-      }
-    }
-  }
-
-  // formting amount containing dot
-  void doubleValueFormating(NumberFormat formatter, String text) {
-    String formatString;
-    List<String> textSplitted;
-    if (text == '.') {
-      _controller.text = "₹ 0";
-      _controller.selection = TextSelection.fromPosition(
-          TextPosition(offset: _controller.text.length.toInt()));
-    } else {
-      formatString = text.split('₹').last.trim().toString();
-
-      textSplitted = formatString.split('.');
-      _controller.text =
-          "₹${formatter.format(int.parse(textSplitted.first.toString())).toString()}.${textSplitted.last.toString().length > 2 ? textSplitted.last.toString().substring(0, 2).toString() : textSplitted.last.toString()}";
-      _controller.selection = TextSelection.fromPosition(
-          TextPosition(offset: _controller.text.length.toInt()));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,6 +79,56 @@ class _AmountScreenState extends State<AmountScreen> {
             ),
       ),
     );
+  }
+
+  // amount changing to indian format
+  void amountFormatter(String text) {
+
+    String rupeeSplittedText = text.split('₹').last.trim().toString();
+    String replacedText = rupeeSplittedText.replaceAll(',', '').trim();
+
+    int textLength = replacedText.length;
+
+    if (replacedText.contains('.')) {
+      doubleValueFormating(formatNumber, text);
+    } else {
+      if (textLength > 8) {
+        _controller.text =
+            "₹${formatNumber.format(int.parse(replacedText.toString().substring(0, 8)))}";
+        
+        _controller.selection = TextSelection.fromPosition(
+            TextPosition(offset: _controller.text.length.toInt()));
+      } else if (textLength == 0) {
+        _controller.clear();
+        _controller.text = '₹';
+        _controller.selection =
+            TextSelection.fromPosition(const TextPosition(offset: 1));
+      } else {
+        _controller.text =
+            "₹${formatNumber.format(int.parse(replacedText.toString()))}";
+        _controller.selection = TextSelection.fromPosition(
+            TextPosition(offset: _controller.text.length.toInt()));
+      }
+    }
+  }
+
+  // formting amount containing dot
+  void doubleValueFormating(NumberFormat formatter, String text) {
+    String formatString;
+    List<String> textSplitted;
+    if (text == '.') {
+      _controller.text = "₹ 0";
+      _controller.selection = TextSelection.fromPosition(
+          TextPosition(offset: _controller.text.length.toInt()));
+    } else {
+      formatString = text.split('₹').last.trim().toString();
+
+      textSplitted = formatString.split('.');
+      _controller.text =
+          "₹${formatter.format(int.parse(textSplitted.first.toString())).toString()}.${textSplitted.last.toString().length > 2 ? textSplitted.last.toString().substring(0, 2).toString() : textSplitted.last.toString()}";
+      _controller.selection = TextSelection.fromPosition(
+          TextPosition(offset: _controller.text.length.toInt()));
+    }
   }
 
 }
