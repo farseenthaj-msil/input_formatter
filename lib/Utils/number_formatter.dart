@@ -46,8 +46,10 @@ class IndianRupeeFormatter {
           TextPosition(offset: controller.text.length));
     } else {
       formatString = text.split('₹').last.trim().toString();
-
       textSplitted = formatString.split('.');
+      if (textSplitted.last == '') {
+        textSplitted.last = textSplitted[1];
+      }
       controller.text =
           "₹${formatter.format(int.parse(textSplitted.first.toString())).toString()}.${textSplitted.last.toString().length > 2 ? textSplitted.last.toString().substring(0, 2).toString() : textSplitted.last.toString()}";
       controller.selection = TextSelection.fromPosition(
