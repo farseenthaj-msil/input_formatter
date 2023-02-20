@@ -47,11 +47,6 @@ class _AmountScreenState extends State<AmountScreen> {
                   onChanged: (text) {
                     amountFormatter(text);    
                   },
-                  onTap: () {
-                      if (_controller.text.isEmpty) {
-                        _controller.text = '₹';
-                      }
-                  },
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
@@ -59,9 +54,7 @@ class _AmountScreenState extends State<AmountScreen> {
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
                   decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-
-                    ),
+                    border: OutlineInputBorder(),
                     hintText: '₹ 0',
                     filled: true
                   ),
@@ -97,7 +90,7 @@ class _AmountScreenState extends State<AmountScreen> {
             "₹${formatNumber.format(int.parse(replacedText.toString().substring(0, 8)))}";
         
         _controller.selection = TextSelection.fromPosition(
-            TextPosition(offset: _controller.text.length.toInt()));
+            TextPosition(offset: _controller.text.length));
       } else if (textLength == 0) {
         _controller.clear();
         _controller.text = '₹';
@@ -107,7 +100,7 @@ class _AmountScreenState extends State<AmountScreen> {
         _controller.text =
             "₹${formatNumber.format(int.parse(replacedText.toString()))}";
         _controller.selection = TextSelection.fromPosition(
-            TextPosition(offset: _controller.text.length.toInt()));
+            TextPosition(offset: _controller.text.length));
       }
     }
   }
@@ -119,7 +112,7 @@ class _AmountScreenState extends State<AmountScreen> {
     if (text == '.') {
       _controller.text = "₹ 0";
       _controller.selection = TextSelection.fromPosition(
-          TextPosition(offset: _controller.text.length.toInt()));
+          TextPosition(offset: _controller.text.length));
     } else {
       formatString = text.split('₹').last.trim().toString();
 
@@ -127,7 +120,7 @@ class _AmountScreenState extends State<AmountScreen> {
       _controller.text =
           "₹${formatter.format(int.parse(textSplitted.first.toString())).toString()}.${textSplitted.last.toString().length > 2 ? textSplitted.last.toString().substring(0, 2).toString() : textSplitted.last.toString()}";
       _controller.selection = TextSelection.fromPosition(
-          TextPosition(offset: _controller.text.length.toInt()));
+          TextPosition(offset: _controller.text.length));
     }
   }
 
