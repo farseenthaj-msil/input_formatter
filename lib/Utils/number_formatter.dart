@@ -25,8 +25,6 @@ class IndianRupeeFormatter {
             TextPosition(offset: controller.text.length));
       } else if (textLength == 0) {
         controller.clear();
-        
-        controller.text = '₹';
         controller.selection =
             TextSelection.fromPosition(const TextPosition(offset: 1));
       } else {

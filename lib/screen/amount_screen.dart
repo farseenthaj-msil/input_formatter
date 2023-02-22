@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:input_formatter/utils/number_formatter.dart';
-import 'package:input_formatter/widgets/indian_format_widget.dart';
+import 'package:input_formatter/widgets/indian_format_textfield.dart';
 
 class AmountScreen extends StatefulWidget {
   const AmountScreen({Key? key}) : super(key: key);
