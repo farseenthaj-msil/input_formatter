@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:input_formatter/utils/number_formatter.dart';
 import 'package:input_formatter/widgets/indian_format_textfield.dart';
+import '../utils/keyboard_overlay.dart';
 
 class AmountScreen extends StatefulWidget {
   const AmountScreen({Key? key}) : super(key: key);
@@ -25,6 +28,16 @@ class _AmountScreenState extends State<AmountScreen> {
   @override
   void initState() {
     super.initState();
+
+    numberFocusNode.addListener(() {
+      bool hasFocus = numberFocusNode.hasFocus;
+      if (hasFocus && Platform.isIOS) {
+        KeyboardOverlay.showOverlay(context);
+      } else {
+        KeyboardOverlay.removeOverlay();
+      }
+    });
+
     _controller = TextEditingController();
     properties = TextfieldProperties(
         _controller,
@@ -38,6 +51,7 @@ class _AmountScreenState extends State<AmountScreen> {
 
   @override
   void dispose() {
+    numberFocusNode.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -48,28 +62,28 @@ class _AmountScreenState extends State<AmountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Indian Rupee Formatter"),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 20, right: 8, left: 8),
-              child: Column(
-                children: [
-                  indianFormatTextField(properties, onChanged),
-                  ElevatedButton(
-                      onPressed: () {
-                        FocusScope.of(context).unfocus();
-                      },
-                      child: const Text('OK'))
-                ],
-              ),
-            )
-          ],
+    return GestureDetector(
+      onTap: () {
+        numberFocusNode.unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Indian Rupee Formatter"),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 20, right: 8, left: 8),
+                child: Column(
+                  children: [
+                    indianFormatTextField(properties, onChanged),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
