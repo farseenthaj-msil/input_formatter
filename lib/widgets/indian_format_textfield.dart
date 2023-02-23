@@ -1,29 +1,68 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:input_formatter/utils/number_formatter.dart';
+import '../utils/keyboard_overlay.dart';
 
-class TextfieldProperties {
+class IndianFormatTextField extends StatefulWidget {
+  const IndianFormatTextField({Key? key}) : super(key: key);
 
-  TextfieldProperties(this.controller, this.decoration, this.style,
-      this.formatter,  this.focusNode, this.keyboardType,this.textAlign);
-
-  TextEditingController? controller;
-  TextAlign textAlign = TextAlign.start;
-  TextStyle? style;
-  List<TextInputFormatter>? formatter;
-  InputDecoration? decoration;
-  FocusNode? focusNode;
-  TextInputType? keyboardType;
-
+  @override
+  State<IndianFormatTextField> createState() => _IndianFormatTextFieldState();
 }
 
-Widget indianFormatTextField (TextfieldProperties textfieldProperties, Function onChanged) {
-  return TextField(
-      controller: textfieldProperties.controller,
-      focusNode: textfieldProperties.focusNode,
-      textAlign: textfieldProperties.textAlign,
-      onChanged: (text) => onChanged(textfieldProperties.controller, text),
-      style: textfieldProperties.style,
-      inputFormatters: textfieldProperties.formatter,
-      keyboardType: textfieldProperties.keyboardType,
-      decoration: textfieldProperties.decoration);
+class _IndianFormatTextFieldState extends State<IndianFormatTextField> {
+
+  final TextEditingController _controller = TextEditingController();
+  FocusNode numberFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+
+    numberFocusNode.addListener(() {
+      bool hasFocus = numberFocusNode.hasFocus;
+      if (hasFocus && Platform.isIOS) {
+        KeyboardOverlay.showOverlay(context);
+      } else {
+        if (_controller.text.endsWith('.')) {
+          _controller.text = _controller.text.replaceAll('.', '');
+        }
+        KeyboardOverlay.removeOverlay();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    numberFocusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return
+     
+        TextField(
+          controller: _controller,
+          focusNode: numberFocusNode,
+          textAlign: TextAlign.center,
+          onChanged: (text) {
+            IndianRupeeFormatter.amountFormatter(text, _controller);
+          },
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp("[0-9.]")),
+          ],
+          keyboardType:
+              const TextInputType.numberWithOptions(decimal: true),
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: '₹0',
+            filled: true
+          ),
+        );
+     
+  }
 }
